@@ -10,7 +10,7 @@ def load_system_prompt():
         raise e
 
     try:
-        return open(system_prompt_path, "r", encoding="uft-8").read()
+        return open(system_prompt_path, "r", encoding="utf-8").read()
     except KeyError as e:
         logger.error(f"[load_system_prompts] anlyse system prompt error:{str(e)}")
         raise e
@@ -23,7 +23,7 @@ def load_rag_prompt():
         raise e
 
     try:
-        return open(rag_prompt_path, "r", encoding="uft-8").read()
+        return open(rag_prompt_path, "r", encoding="utf-8").read()
     except KeyError as e:
         logger.error(f"[load_rag_prompt] anlyse system prompt error:{str(e)}")
         raise e
@@ -36,8 +36,12 @@ def load_report_prompt():
         raise e
 
     try:
-        return open(report_prompt_path, "r", encoding="uft-8").read()
+        return open(report_prompt_path, "r", encoding="utf-8").read()
     except KeyError as e:
         logger.error(f"[load_report_prompt] anlyse system prompt error:{str(e)}")
         raise e
     
+if __name__ == "__main__":
+    print(load_system_prompt())
+    print(load_rag_prompt())
+    print(load_report_prompt())
