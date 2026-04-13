@@ -1,5 +1,6 @@
 from langchain.tools import tool
 from rag.rag_service import RagSummarize
+import requests
 
 import random
 import os
@@ -9,6 +10,7 @@ from utils.path_tool import get_abs_path
 from utils.log_handler import logger
 
 rag = RagSummarize()
+gaode_key = agent_conf["gaode_api_key"]
 
 user_ids = ["1001","1002","1003","1004","1005","1006","1007","1008","1009", "1010"]
 months = ["2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12"]
@@ -19,12 +21,36 @@ def rag_summarize(query: str)->str:
     return rag.rag_summarize(query)
 
 @tool(description="search today weather")
-def get_weater(city:str)->str:
-    return f"{city} weather is sunny"
+def get_weather(adcode, extensions="base")->str:
+    url = "https://restapi.amap.com/v3/weather/weatherInfo"
+    params = {"key": gaode_key, "city": adcode, "extensions": extensions, "output": "json"}
+    
+    res = requests.get(url, params=params).json()
+    if res.get("status") == "1" and res.get("lives"):
+        return res["lives"][0]
+
+    return ""
+
 
 @tool(description="get user localtion")
-def get_user_location(city: str)->str:
-    return random.choice(["hangzhou", "nantong", "wenzhou"])
+def get_user_location(ip= None)->dict:
+    url = "https://restapi.amap.com/v3/ip"
+    params = {
+        "key": gaode_key,
+        "ip": ip,  # 不传则为None，自动取请求IP
+        "output": "json"
+    }
+    try:
+        res = requests.get(url, params=params, timeout=5).json()
+        print(res.get("city"))
+        if res.get("status") == "1" and res.get("infocode") == "10000":
+            return {"city": res.get("city"), "adcode": res.get("adcode")}
+        else:
+            print(f"错误：{res.get('info')}，码：{res.get('infocode')}")
+            return {}
+    except Exception as e:
+        print(f"请求异常：{e}")
+        return {}
 
 @tool(description="get user id, return string")
 def get_user_id()->str:
@@ -83,4 +109,6 @@ def fill_context_for_report():
     return "fill_context_for_report is used"
 
 if __name__ == "__main__":
-    print(fetch_external_data("1002", "2025-04"))
+    res = get_user_location()
+    print(res)
+    print(get_weather(res["adcode"]))
