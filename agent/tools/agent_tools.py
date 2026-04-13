@@ -78,5 +78,9 @@ def fetch_external_data(user_id: str, month:str)->str:
         logger.warning(f"[fetch_external_data] miss user:{user_id} in {month} recorde")
         return ""
 
+@tool(description="fill context for report")
+def fill_context_for_report():
+    return "fill_context_for_report is used"
+
 if __name__ == "__main__":
     print(fetch_external_data("1002", "2025-04"))
