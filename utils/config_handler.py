@@ -1,4 +1,4 @@
-from path_tool import get_abs_path
+from utils.path_tool import get_abs_path
 import yaml
 
 def load_rag_config(config_path:str=get_abs_path("config/rag.yml"), encoding="utf-8"):

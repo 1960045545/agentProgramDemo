@@ -1,6 +1,5 @@
 import os
 
-
 def get_project_root()->str:
     cur_path = os.path.abspath(__file__)
     cur_dir = os.path.dirname(cur_path) #os.path.dirname等同与../
